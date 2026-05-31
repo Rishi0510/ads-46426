@@ -5,7 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PA Policy Access Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      // ===== LOADING SCREEN CONTROLLER =====
+      const loadingScreen = document.getElementById("loading-screen");
+      const loadingBar = document.getElementById("loading-bar");
+      const loadingStatus = document.getElementById("loading-status");
 
+      let loadProgress = 0;
+      const totalCharts = 4; // histogram, box, steps, reqs
+      let chartsLoaded = 0;
+
+      function updateLoading(status, progress) {
+        loadingStatus.textContent = status;
+        loadingBar.style.width = progress + "%";
+      }
+
+      function chartDone() {
+        chartsLoaded++;
+        const pct = Math.round((chartsLoaded / totalCharts) * 100);
+        updateLoading(
+          `Rendering charts (${chartsLoaded}/${totalCharts})...`,
+          pct
+        );
+
+        if (chartsLoaded >= totalCharts) {
+          setTimeout(hideLoading, 400);
+        }
+      }
+
+      function hideLoading() {
+        loadingScreen.style.opacity = "0";
+        loadingScreen.style.pointerEvents = "none";
+        setTimeout(() => {
+          loadingScreen.style.display = "none";
+        }, 500);
+      }
+
+      // Start loading sequence
+      updateLoading("Processing policy data...", 10);
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@3.5.1/plotly.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -648,45 +686,7 @@
     </footer>
 
     <!-- ===================== DATA & SCRIPTS ===================== -->
-    <script>
-      // ===== LOADING SCREEN CONTROLLER =====
-      const loadingScreen = document.getElementById("loading-screen");
-      const loadingBar = document.getElementById("loading-bar");
-      const loadingStatus = document.getElementById("loading-status");
 
-      let loadProgress = 0;
-      const totalCharts = 4; // histogram, box, steps, reqs
-      let chartsLoaded = 0;
-
-      function updateLoading(status, progress) {
-        loadingStatus.textContent = status;
-        loadingBar.style.width = progress + "%";
-      }
-
-      function chartDone() {
-        chartsLoaded++;
-        const pct = Math.round((chartsLoaded / totalCharts) * 100);
-        updateLoading(
-          `Rendering charts (${chartsLoaded}/${totalCharts})...`,
-          pct
-        );
-
-        if (chartsLoaded >= totalCharts) {
-          setTimeout(hideLoading, 400);
-        }
-      }
-
-      function hideLoading() {
-        loadingScreen.style.opacity = "0";
-        loadingScreen.style.pointerEvents = "none";
-        setTimeout(() => {
-          loadingScreen.style.display = "none";
-        }, 500);
-      }
-
-      // Start loading sequence
-      updateLoading("Processing policy data...", 10);
-    </script>
     <script>
       // ===== EMBEDDED DATA (replace with your real data.json content) =====
       const DATA = {
