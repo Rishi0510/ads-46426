@@ -6,11 +6,11 @@
 
 > **Name:** Abhinav Srinivas Ivaturi
 > **Date:** May 2026  
-> **Submission:** Automated extraction of 12 standardized access parameters + custom Access Quality Score from 80+ payer PA policy PDFs for biologics in Plaque Psoriasis (PsO).
+> **Submission:** Automated extraction of 12 standardized access parameters + custom Access Quality Score from 70 payer PA policy PDFs for biologics in Plaque Psoriasis (PsO).
 
 ---
 
-<img width="2812" height="1560" alt="image" src="https://github.com/user-attachments/assets/bbcaa2c2-89e5-4254-92a1-29fd18ddd1eb" />
+<img width="901" height="500" alt="image" src="https://github.com/user-attachments/assets/bbcaa2c2-89e5-4254-92a1-29fd18ddd1eb" />
 
 
 ## 📋 Table of Contents
@@ -685,9 +685,9 @@ if effective_burden == 0 and has_photo:
 | Metric | Value |
 |--------|-------|
 | Total PDFs processed | 79 |
-| Successful extractions | 73 |
-| JSON failures (repaired) | ~4 |
-| JSON failures (unrecoverable) | ~2 |
+| Successful extractions | 78 |
+| JSON failures (repaired) | ~1 |
+| JSON failures (unrecoverable) | ~0 |
 | Average time per file | ~20 seconds |
 | Total pipeline runtime | ~25 minutes |
 | Cache efficiency on re-run | 100% (0 API calls) |
@@ -705,8 +705,8 @@ if effective_burden == 0 and has_photo:
 
 | Level | Count | Action |
 |-------|-------|--------|
-| High | ~55 | Auto-accept |
-| Medium | ~15 | Spot-check |
+| High | ~60 | Auto-accept |
+| Medium | ~10 | Spot-check |
 | Low | ~5 | Manual review |
 
 ---
@@ -719,7 +719,7 @@ if effective_burden == 0 and has_photo:
 
 We built a **static interactive dashboard** deployed on Vercel to visualize extracted PA policy data. The dashboard provides real-time exploration of access parameters across 80+ policies without requiring any backend infrastructure.
 
-**🔗 Live URL:** [hackathon-pa-dashboard.vercel.app](https://hackathon-pa-dashboard.vercel.app)
+**🔗 Live URL:** [ads-46426.vercel.app](https://ads-46426.vercel.app)
 
 ### Technology Stack
 
@@ -826,14 +826,6 @@ git init && git add . && git commit -m "deploy dashboard"
 gh repo create hackathon-pa-dashboard --public --source=. --push
 # Connect to Vercel → auto-deploys on push
 ```
-
-### Screenshots
-
-<img width="2832" height="1706" alt="image" src="https://github.com/user-attachments/assets/369481f2-2ee2-4752-8e41-cfd96b7f9dcb" />
-<img width="2498" height="1256" alt="image" src="https://github.com/user-attachments/assets/3ee5b446-3d9d-46be-aff8-97c7957a18ef" />
-<img width="2808" height="1702" alt="image" src="https://github.com/user-attachments/assets/9e1a6ff7-98bf-49ec-a211-cab043bd04dd" />
-
-
 
 
 ---
