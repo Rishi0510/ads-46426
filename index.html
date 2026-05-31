@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PA Policy Access Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@3.5.1/plotly.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+
     <script>
       tailwind.config = {
         theme: {
@@ -94,6 +96,57 @@
     </style>
   </head>
   <body class="bg-gray-50 font-sans text-gray-800">
+    <!-- ===================== LOADING SCREEN ===================== -->
+    <div
+      id="loading-screen"
+      class="fixed inset-0 z-[9999] flex items-center justify-center gradient-bg transition-opacity duration-500"
+    >
+      <div class="text-center">
+        <!-- Animated Logo -->
+        <div class="relative mx-auto w-16 h-16 mb-6">
+          <div
+            class="absolute inset-0 rounded-xl bg-white/20 animate-ping"
+          ></div>
+          <div
+            class="relative w-16 h-16 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center"
+          >
+            <svg
+              class="w-8 h-8 text-white animate-pulse"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Title -->
+        <h2 class="text-white text-lg font-semibold mb-2">
+          PA Access Dashboard
+        </h2>
+        <p class="text-blue-200 text-sm mb-6">Loading analytics...</p>
+
+        <!-- Progress Bar -->
+        <div
+          class="w-48 mx-auto h-1.5 bg-white/20 rounded-full overflow-hidden"
+        >
+          <div
+            id="loading-bar"
+            class="h-full bg-white rounded-full transition-all duration-300 ease-out"
+            style="width: 0%"
+          ></div>
+        </div>
+        <p id="loading-status" class="text-blue-300 text-xs mt-3">
+          Initializing...
+        </p>
+      </div>
+    </div>
     <!-- ===================== NAVBAR ===================== -->
     <nav
       id="navbar"
@@ -596,6 +649,45 @@
 
     <!-- ===================== DATA & SCRIPTS ===================== -->
     <script>
+      // ===== LOADING SCREEN CONTROLLER =====
+      const loadingScreen = document.getElementById("loading-screen");
+      const loadingBar = document.getElementById("loading-bar");
+      const loadingStatus = document.getElementById("loading-status");
+
+      let loadProgress = 0;
+      const totalCharts = 4; // histogram, box, steps, reqs
+      let chartsLoaded = 0;
+
+      function updateLoading(status, progress) {
+        loadingStatus.textContent = status;
+        loadingBar.style.width = progress + "%";
+      }
+
+      function chartDone() {
+        chartsLoaded++;
+        const pct = Math.round((chartsLoaded / totalCharts) * 100);
+        updateLoading(
+          `Rendering charts (${chartsLoaded}/${totalCharts})...`,
+          pct
+        );
+
+        if (chartsLoaded >= totalCharts) {
+          setTimeout(hideLoading, 400);
+        }
+      }
+
+      function hideLoading() {
+        loadingScreen.style.opacity = "0";
+        loadingScreen.style.pointerEvents = "none";
+        setTimeout(() => {
+          loadingScreen.style.display = "none";
+        }, 500);
+      }
+
+      // Start loading sequence
+      updateLoading("Processing policy data...", 10);
+    </script>
+    <script>
       // ===== EMBEDDED DATA (replace with your real data.json content) =====
       const DATA = {
         metadata: {
@@ -1087,7 +1179,7 @@
           font: { family: "Inter" },
         },
         { responsive: true, displayModeBar: false }
-      );
+      ).then(chartDone);
 
       // ===== CHART 2: Box Plot - Access Score by Brand (Horizontal) =====
       const brands = [...new Set(policies.map((p) => p.brand))].sort();
@@ -1124,7 +1216,7 @@
           font: { family: "Inter" },
         },
         { responsive: true, displayModeBar: false }
-      );
+      ).then(chartDone);
 
       // ===== CHART 3: Stacked Bar - Step Therapy Burden =====
 
@@ -1184,7 +1276,7 @@
           font: { family: "Inter" },
         },
         { responsive: true, displayModeBar: false }
-      );
+      ).then(chartDone);
 
       // ===== CHART 4: Requirements Donut =====
       const photoCount = policies.filter(
@@ -1223,7 +1315,7 @@
           font: { family: "Inter", size: 11 },
         },
         { responsive: true, displayModeBar: false }
-      );
+      ).then(chartDone);
 
       // ===== DATA TABLE =====
       let currentSort = { key: "access_score", dir: "desc" };
