@@ -4,46 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PA Policy Access Dashboard</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect x='12' y='4' width='40' height='56' rx='4' fill='%230066CC'/><rect x='12' y='4' width='40' height='56' rx='4' fill='none' stroke='%23004A99' stroke-width='2'/><rect x='20' y='14' width='24' height='3' rx='1.5' fill='%23ffffff' opacity='0.9'/><rect x='20' y='21' width='18' height='2' rx='1' fill='%23ffffff' opacity='0.5'/><rect x='20' y='26' width='20' height='2' rx='1' fill='%23ffffff' opacity='0.5'/><rect x='20' y='31' width='14' height='2' rx='1' fill='%23ffffff' opacity='0.5'/><rect x='20' y='40' width='6' height='14' rx='1' fill='%2300A3E0'/><rect x='29' y='44' width='6' height='10' rx='1' fill='%2300A3E0' opacity='0.7'/><rect x='38' y='36' width='6' height='18' rx='1' fill='%23ffffff' opacity='0.9'/></svg>"
+    />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      // ===== LOADING SCREEN CONTROLLER =====
-      const loadingScreen = document.getElementById("loading-screen");
-      const loadingBar = document.getElementById("loading-bar");
-      const loadingStatus = document.getElementById("loading-status");
-
-      let loadProgress = 0;
-      const totalCharts = 4; // histogram, box, steps, reqs
-      let chartsLoaded = 0;
-
-      function updateLoading(status, progress) {
-        loadingStatus.textContent = status;
-        loadingBar.style.width = progress + "%";
-      }
-
-      function chartDone() {
-        chartsLoaded++;
-        const pct = Math.round((chartsLoaded / totalCharts) * 100);
-        updateLoading(
-          `Rendering charts (${chartsLoaded}/${totalCharts})...`,
-          pct
-        );
-
-        if (chartsLoaded >= totalCharts) {
-          setTimeout(hideLoading, 400);
-        }
-      }
-
-      function hideLoading() {
-        loadingScreen.style.opacity = "0";
-        loadingScreen.style.pointerEvents = "none";
-        setTimeout(() => {
-          loadingScreen.style.display = "none";
-        }, 500);
-      }
-
-      // Start loading sequence
-      updateLoading("Processing policy data...", 10);
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@3.5.1/plotly.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -686,7 +652,45 @@
     </footer>
 
     <!-- ===================== DATA & SCRIPTS ===================== -->
+    <script>
+      // ===== LOADING SCREEN CONTROLLER =====
+      const loadingScreen = document.getElementById("loading-screen");
+      const loadingBar = document.getElementById("loading-bar");
+      const loadingStatus = document.getElementById("loading-status");
 
+      let loadProgress = 0;
+      const totalCharts = 4; // histogram, box, steps, reqs
+      let chartsLoaded = 0;
+
+      function updateLoading(status, progress) {
+        loadingStatus.textContent = status;
+        loadingBar.style.width = progress + "%";
+      }
+
+      function chartDone() {
+        chartsLoaded++;
+        const pct = Math.round((chartsLoaded / totalCharts) * 100);
+        updateLoading(
+          `Rendering charts (${chartsLoaded}/${totalCharts})...`,
+          pct
+        );
+
+        if (chartsLoaded >= totalCharts) {
+          setTimeout(hideLoading, 400);
+        }
+      }
+
+      function hideLoading() {
+        loadingScreen.style.opacity = "0";
+        loadingScreen.style.pointerEvents = "none";
+        setTimeout(() => {
+          loadingScreen.style.display = "none";
+        }, 500);
+      }
+
+      // Start loading sequence
+      updateLoading("Processing policy data...", 10);
+    </script>
     <script>
       // ===== EMBEDDED DATA (replace with your real data.json content) =====
       const DATA = {
