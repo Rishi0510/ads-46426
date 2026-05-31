@@ -2,7 +2,7 @@
 
 ## H1'26 Hackathon — PA Access Intelligence System
 
-> **Team:** [Your Team Name]  
+> **Name:** Abhinav Srinivas Ivaturi
 > **Date:** May 2026  
 > **Submission:** Automated extraction of 12 standardized access parameters + custom Access Quality Score from 80+ payer PA policy PDFs for biologics in Plaque Psoriasis (PsO).
 
@@ -36,7 +36,7 @@
 We built an end-to-end automated pipeline that ingests payer Prior Authorization (PA) policy PDFs and extracts **12 standardized access parameters** plus a **custom Access Quality Score (0–100)** for biologic drugs used in moderate-to-severe Plaque Psoriasis.
 
 **Key metrics:**
-- 📄 **80+ PDFs** processed across 18+ brands
+- 📄 **70+ PDFs** processed across 18+ brands
 - ⚡ **~15-25 seconds per file** (parse + extract + compute)
 - 🎯 **15/15 unit tests passing** on deterministic step counter
 - 🛡️ **6-strategy JSON repair** for robust LLM response handling
