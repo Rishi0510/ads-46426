@@ -2,7 +2,7 @@
 
 ## H1'26 Hackathon — PA Access Intelligence System
 
-> **Name:** Abhinav Srinivas Ivaturi
+> **Team:** [Your Team Name]  
 > **Date:** May 2026  
 > **Submission:** Automated extraction of 12 standardized access parameters + custom Access Quality Score from 80+ payer PA policy PDFs for biologics in Plaque Psoriasis (PsO).
 
@@ -36,7 +36,7 @@
 We built an end-to-end automated pipeline that ingests payer Prior Authorization (PA) policy PDFs and extracts **12 standardized access parameters** plus a **custom Access Quality Score (0–100)** for biologic drugs used in moderate-to-severe Plaque Psoriasis.
 
 **Key metrics:**
-- 📄 **70+ PDFs** processed across 18+ brands
+- 📄 **80+ PDFs** processed across 18+ brands
 - ⚡ **~15-25 seconds per file** (parse + extract + compute)
 - 🎯 **15/15 unit tests passing** on deterministic step counter
 - 🛡️ **6-strategy JSON repair** for robust LLM response handling
@@ -706,6 +706,133 @@ if effective_burden == 0 and has_photo:
 
 ---
 
+---
+
+## Interactive Visualization Dashboard
+
+### Overview
+
+We built a **static interactive dashboard** deployed on Vercel to visualize extracted PA policy data. The dashboard provides real-time exploration of access parameters across 80+ policies without requiring any backend infrastructure.
+
+**🔗 Live URL:** [hackathon-pa-dashboard.vercel.app](https://hackathon-pa-dashboard.vercel.app)
+
+### Technology Stack
+
+| Component | Technology | Purpose |
+|-----------|-----------|---------|
+| Charts | Plotly.js (CDN) | Interactive, responsive visualizations |
+| Styling | Tailwind CSS (CDN) | Clean UI with zero build step |
+| Data | Embedded JSON | No API needed — self-contained |
+| Hosting | Vercel (free tier) | Instant deploys via GitHub push |
+| Loading | Custom loading screen | Graceful Plotly.js initialization in background |
+
+### Architecture
+
+```
+┌───────────────────────────────────────────┐
+│          Single index.html file            │
+├───────────────────────────────────────────┤
+│  ┌─────────────────────────────────────┐  │
+│  │  Loading Screen                      │  │
+│  │  (shown while Plotly.js loads)       │  │
+│  └─────────────────────────────────────┘  │
+│  ┌─────────────────────────────────────┐  │
+│  │  <script> data.json embedded </script│  │
+│  └─────────────────────────────────────┘  │
+│  ┌─────────────────────────────────────┐  │
+│  │  Dashboard Layout                    │  │
+│  │  ├── KPI Cards (summary stats)       │  │
+│  │  ├── Charts (Plotly.js)              │  │
+│  │  │   ├── Access Score Distribution   │  │
+│  │  │   ├── Score by Brand (box plot)   │  │
+│  │  │   ├── Step Therapy Burden (bar)   │  │
+│  │  │   └── Photo/TB/Reauth (donuts)   │  │
+│  │  ├── Interactive Data Table          │  │
+│  │  │   (sortable, filterable, expand)  │  │
+│  │  └── Radar Chart (policy comparison) │  │
+│  └─────────────────────────────────────┘  │
+└───────────────────────────────────────────┘
+```
+
+### Dashboard Features
+
+#### KPI Cards
+Summary statistics at a glance:
+- Total PDFs processed
+- Average Access Score
+- Average step therapy burden
+- TB test required percentage
+- Reauthorization required percentage
+
+#### Access Score Distribution
+Histogram showing the spread of scores across all policies, with color-coded ranges (restricted → favorable).
+
+#### Score by Brand
+Box plot comparing TREMFYA vs STELARA vs non-focus brands — enables quick identification of which drug has better average payer access.
+
+#### Step Therapy Burden
+Stacked bar chart showing branded vs generic step requirements per policy, sorted by total burden.
+
+#### Policy Breakdown Donuts
+Three donut charts showing proportions for:
+- Phototherapy required (Yes/No/N/A)
+- TB test required (Y/N)
+- Reauthorization required (Yes/No/Unspecified)
+
+#### Interactive Data Table
+Full extraction results in a searchable, sortable, filterable table. Click any row to expand and see full step therapy text and reauthorization requirements.
+
+#### Radar/Spider Chart
+Side-by-side comparison of any 2-3 policies across all scoring dimensions (step burden, auth duration, QL, specialist, etc.). Selectable via dropdown.
+
+### Loading Strategy
+
+To avoid a blank screen while Plotly.js (~3MB) loads over CDN:
+
+```html
+<!-- Loading screen shown immediately -->
+<div id="loading-screen">
+  <div class="spinner"></div>
+  <p>Loading dashboard...</p>
+</div>
+
+<!-- Plotly loaded async in background -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js" 
+        onload="initDashboard()" async></script>
+
+<script>
+function initDashboard() {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  renderAllCharts();
+}
+</script>
+```
+
+### Deployment
+
+```bash
+# One-time setup
+mkdir hackathon-dashboard && cd hackathon-dashboard
+# Place index.html (contains embedded data.json)
+
+# Deploy
+git init && git add . && git commit -m "deploy dashboard"
+gh repo create hackathon-pa-dashboard --public --source=. --push
+# Connect to Vercel → auto-deploys on push
+```
+
+### Screenshots
+
+<img width="2832" height="1706" alt="image" src="https://github.com/user-attachments/assets/369481f2-2ee2-4752-8e41-cfd96b7f9dcb" />
+<img width="2498" height="1256" alt="image" src="https://github.com/user-attachments/assets/3ee5b446-3d9d-46be-aff8-97c7957a18ef" />
+<img width="2808" height="1702" alt="image" src="https://github.com/user-attachments/assets/9e1a6ff7-98bf-49ec-a211-cab043bd04dd" />
+
+
+
+
+---
+
 ## Future Improvements
 
 ### Near-term (if more time available)
@@ -717,10 +844,9 @@ if effective_burden == 0 and has_photo:
 
 ### Longer-term (productionization)
 
-1. **Streamlit/Next.js Dashboard** — Interactive visualization of access scores across payers
-2. **Continuous Monitoring** — Re-run pipeline when payers update policies
-3. **Multi-indication Expansion** — Extend beyond PsO to PsA, CD, UC
-4. **Confidence-Based Routing** — Automatically re-run low-confidence extractions with Pro-tier models
+1. **Continuous Monitoring** — Re-run pipeline when payers update policies
+2. **Multi-indication Expansion** — Extend beyond PsO to PsA, CD, UC
+3. **Confidence-Based Routing** — Automatically re-run low-confidence extractions with Pro-tier models
 
 ---
 
@@ -737,6 +863,7 @@ if effective_burden == 0 and has_photo:
 | Data Processing | pandas + openpyxl | DataFrame manipulation + Excel export |
 | Validation | 15-test unit suite | Step counter correctness |
 | Output | .xlsx (submission format) | Final deliverable |
+| Dashboard | Plotly.js + Tailwind CSS + Vercel | Interactive visualization |
 
 ---
 
